@@ -17,6 +17,12 @@ const characters = [
     pullUps: 0,
     strength: 2,
     discipline: 3,
+    ladder: [
+      { rank: 'Novice Scout', xp: 0, movement: 2, strength: 2, discipline: 3 },
+      { rank: 'Rising Scout', xp: 40, movement: 3, strength: 3, discipline: 4 },
+      { rank: 'Trailblazer', xp: 80, movement: 4, strength: 4, discipline: 5 },
+      { rank: 'Guardian Candidate', xp: 120, movement: 5, strength: 5, discipline: 6 },
+    ],
   },
   {
     name: 'Kid-Omni',
@@ -28,6 +34,12 @@ const characters = [
     pullUps: 0,
     strength: 1,
     discipline: 2,
+    ladder: [
+      { rank: 'Junior Initiate', xp: 0, movement: 1, strength: 1, discipline: 2 },
+      { rank: 'Young Builder', xp: 25, movement: 2, strength: 2, discipline: 3 },
+      { rank: 'Rising Spark', xp: 50, movement: 3, strength: 3, discipline: 4 },
+      { rank: 'Steady Flame', xp: 80, movement: 4, strength: 4, discipline: 5 },
+    ],
   },
   {
     name: 'Rising Guardian',
@@ -39,6 +51,12 @@ const characters = [
     pullUps: 0,
     strength: 3,
     discipline: 4,
+    ladder: [
+      { rank: 'Apprentice Guardian', xp: 0, movement: 3, strength: 3, discipline: 4 },
+      { rank: 'Rising Defender', xp: 60, movement: 4, strength: 4, discipline: 5 },
+      { rank: 'Core Protector', xp: 120, movement: 5, strength: 5, discipline: 6 },
+      { rank: 'Hall Sentinel', xp: 180, movement: 6, strength: 6, discipline: 7 },
+    ],
   },
 ];
 
@@ -107,6 +125,10 @@ function renderProgression() {
           <div class="metric-label"><span>Discipline</span><span>${character.discipline}/10</span></div>
           <div class="bar-track"><div class="bar-fill" style="width: ${character.discipline * 10}%"></div></div>
         </div>
+      </div>
+      <div class="metric-list">
+        <div class="metric-label"><span>Rank Ladder</span></div>
+        ${character.ladder.map((step) => `<div class="meta-row">• ${step.rank} · XP ${step.xp}</div>`).join('')}
       </div>
     `;
 

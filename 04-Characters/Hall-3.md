@@ -11,6 +11,12 @@ This character begins at the Day 1 baseline with age-appropriate scaling.
 - Strength baseline: 3/10
 - Discipline baseline: 4/10
 
+## Rank Ladder
+- Apprentice Guardian — XP 0
+- Rising Defender — XP 60
+- Core Protector — XP 120
+- Hall Sentinel — XP 180
+
 ## Progression Chart
 
 | Area | Day 1 State |

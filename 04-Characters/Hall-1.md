@@ -11,6 +11,12 @@ This character begins at the Day 1 baseline with age-appropriate scaling.
 - Strength baseline: 2/10
 - Discipline baseline: 3/10
 
+## Rank Ladder
+- Novice Scout — XP 0
+- Rising Scout — XP 40
+- Trailblazer — XP 80
+- Guardian Candidate — XP 120
+
 ## Progression Chart
 
 | Area | Day 1 State |
