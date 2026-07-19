@@ -216,31 +216,32 @@ function buildAssistantReply(message) {
   const gearSummary = equipmentList.join(', ');
   const movement = extractMovement(normalized);
   const chamberContext = characters[0]?.currentExercise?.title || 'the current chamber day';
+  const recentContext = conversationMemory.slice(-3).join(' | ');
 
   conversationMemory.push(normalized);
 
   if (/(alternative|substitute|instead|dont have|don't have|no equipment|missing|swap|replace)/.test(normalized)) {
     const substitutions = movement ? findSubstitutions(movement) : findSubstitutions('general');
     const line = substitutions.length
-      ? `I’m comparing ${movement || 'that movement'} against your equipment list. The cleanest substitutions are ${substitutions.join(' and ')}.`
-      : 'I’m adapting the pattern to keep the intent intact while using the gear you actually own.';
-    return `${line} Since the chamber is running in ${currentMode} mode and your current day is ${chamberContext}, I’d keep the same demand profile, but swap the tool rather than the purpose.`;
+      ? `I’d swap ${movement || 'the movement'} for ${substitutions[0]} first, and keep ${substitutions[1] || 'the same rep pattern'} as the backup if you want a second option.`
+      : 'I’d preserve the intent of the movement and simply change the tool so the session still lands hard.';
+    return `${line} Because you’re in ${currentMode} mode and the chamber is currently on ${chamberContext}, I’d keep the stress high but choose the option that fits your gear and energy. ${recentContext ? `I’m also tracking that you’ve been asking about ${recentContext}.` : ''}`;
   }
 
   if (/(plan|program|routine|day|workout|chamber|schedule)/.test(normalized)) {
-    return `I’d keep the session dense and simple for ${currentMode}. With your gear — ${gearSummary} — I’d prioritize one main strength pattern, one conditioning pattern, and one recovery reset so the day still feels like a real chamber session.`;
+    return `I’d keep this day dense and clear for ${currentMode}. With your gear — ${gearSummary} — I’d choose one main strength pattern, one conditioning pattern, and one recovery reset so the chamber still feels serious without wasting time. ${recentContext ? `You’ve been circling around ${recentContext}, so I’d build from that instead of starting fresh.` : ''}`;
   }
 
   if (/(tired|recover|fatigue|pain|rest|mobility)/.test(normalized)) {
-    return `If recovery is the issue, I’d reduce the load, keep the tempo honest, and lean on mobility work, band tension, and bodyweight control before pushing harder. Your equipment still gives you enough to train without forcing a bad setup.`;
+    return `If you’re running low, I’d ease the load and keep the pattern honest. Use the mobility work, the band tension, and the bodyweight options first, then decide whether you need a lighter day or a full reset. That keeps you training without forcing a bad setup.`;
   }
 
   if (movement) {
     const substitutions = findSubstitutions(movement);
-    return `I’m reading ${movement} as the movement you want to adjust. Based on your gear, I’d use ${substitutions.slice(0, 2).join(' or ')} first, then keep the same rep target and tempo so the session still trains the intended pattern.`;
+    return `I’m reading ${movement} as the movement you want to adjust. Based on what you own, I’d use ${substitutions.slice(0, 2).join(' or ')} first and keep the same tempo and rep intent so the session still trains the right pattern.`;
   }
 
-  return `I’m treating this as coaching rather than a scripted answer. With your gear — ${gearSummary} — I’d stay practical: keep the movement pattern intact, choose the closest available tool, and preserve the chamber’s pressure without needing the ideal setup.`;
+  return `I’m treating this like real coaching, not a canned answer. With your gear — ${gearSummary} — I’d keep the movement pattern, choose the closest tool you own, and preserve the chamber’s pressure without needing a perfect setup. If you want, I can help you build a full day around the gear you actually have.`;
 }
 
 function extractMovement(message) {
