@@ -141,6 +141,9 @@ completeButton.addEventListener('click', () => {
   dayCompleted = true;
   daysCompleted += 1;
 
+  document.body.classList.add('day-transition');
+  setTimeout(() => document.body.classList.remove('day-transition'), 500);
+
   characters.forEach((character) => {
     const xpGain = character.age <= 8 ? 10 : character.age <= 11 ? 15 : 20;
     character.xp = Math.min(character.xp + xpGain, character.xpCap);

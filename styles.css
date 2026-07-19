@@ -18,6 +18,11 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   background: radial-gradient(circle at top left, rgba(125, 211, 252, 0.12), transparent 28%), linear-gradient(135deg, var(--bg), #111827);
   color: var(--text);
+  transition: background 320ms ease;
+}
+
+body.day-transition {
+  background: radial-gradient(circle at top left, rgba(245, 158, 11, 0.16), transparent 30%), linear-gradient(135deg, #0f172a, #111827);
 }
 
 .app-shell {
@@ -66,7 +71,7 @@ h1 {
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
-  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
 }
 
 .hero-card:hover,
@@ -157,6 +162,29 @@ button,
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 14px;
+}
+
+.timeline {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.timeline-step {
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.timeline-step.is-active {
+  color: var(--text);
+  border-color: rgba(125, 211, 252, 0.35);
+  background: rgba(125, 211, 252, 0.1);
 }
 
 .hero-stat-block {
@@ -316,6 +344,7 @@ button,
   border-radius: 12px;
   padding: 8px;
   background: rgba(255,255,255,0.03);
+  animation: hallFadeIn 220ms ease both;
 }
 
 .movement-row {
@@ -391,6 +420,17 @@ button,
 
 .hall-entry .pill {
   font-size: 0.72rem;
+}
+
+@keyframes hallFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 900px) {
