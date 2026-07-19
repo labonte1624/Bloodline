@@ -61,12 +61,16 @@ const characters = [
 ];
 
 let dayCompleted = false;
+let daysCompleted = 0;
 
 completeButton.addEventListener('click', () => {
   dayCompleted = true;
-  missionText.textContent = 'Day 1 is complete. The system has begun.';
-  statusText.textContent = 'Status: Day 1 complete';
-  addChatMessage('Anissa: Discipline locked in. The first day is yours.', 'assistant');
+  daysCompleted += 1;
+  applyProgression();
+  missionText.textContent = `Day ${daysCompleted} is complete. The system has advanced.`;
+  statusText.textContent = `Status: Day ${daysCompleted} complete`;
+  completeButton.textContent = `Complete Day ${daysCompleted + 1}`;
+  addChatMessage(`Anissa: Discipline locked in. Day ${daysCompleted} is recorded.`, 'assistant');
 });
 
 chatForm.addEventListener('submit', (event) => {
@@ -95,6 +99,22 @@ function getAnissaReply(message) {
   if (lower.includes('pull')) return 'Pull-up progression remains at zero until the foundation is solid.';
   if (lower.includes('movement')) return 'Movement is the first bridge to endurance and control.';
   return 'Stay disciplined. One day, one step, one purpose.';
+}
+
+function applyProgression() {
+  characters.forEach((character) => {
+    const xpGain = character.age <= 8 ? 10 : character.age <= 11 ? 15 : 20;
+    character.xp = Math.min(character.xp + xpGain, character.xpCap);
+    character.pullUps = Math.min(character.pullUps + (daysCompleted > 0 ? 1 : 0), 10);
+    character.movement = Math.min(character.movement + (daysCompleted > 0 ? 1 : 0), 10);
+    character.strength = Math.min(character.strength + (daysCompleted > 0 ? 1 : 0), 10);
+    character.discipline = Math.min(character.discipline + (daysCompleted > 0 ? 1 : 0), 10);
+
+    const nextStep = character.ladder.find((step) => step.xp >= character.xp) || character.ladder[character.ladder.length - 1];
+    character.rank = nextStep.rank;
+  });
+
+  renderProgression();
 }
 
 function renderProgression() {
