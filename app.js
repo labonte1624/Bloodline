@@ -89,6 +89,10 @@ const equipmentList = [
   'agility ladder',
 ];
 const conversationMemory = [];
+const conversationState = {
+  tone: 'coaching',
+  topic: 'fitness',
+};
 
 const hallBlueprints = [
   {
@@ -217,8 +221,19 @@ function buildAssistantReply(message) {
   const movement = extractMovement(normalized);
   const chamberContext = characters[0]?.currentExercise?.title || 'the current chamber day';
   const recentContext = conversationMemory.slice(-3).join(' | ');
+  const tone = inferTone(normalized);
 
+  conversationState.tone = tone;
+  conversationState.topic = movement || (/(personal|feel|emotion|romance|flirt|cute|tease|kiss|desire)/.test(normalized) ? 'personal' : 'fitness');
   conversationMemory.push(normalized);
+
+  if (/(sex|sexual|explicit|nude|kiss me|make out|bed|horny|xxx|nasty)/.test(normalized)) {
+    return `I can stay warm, confident, and playful, but I’m not going to move into explicit content. If you want, I can keep the energy charged and a little flirtier while staying tasteful and respectful.`;
+  }
+
+  if (tone === 'playful' || /(flirt|flirty|cute|tease|seductive|hot|beautiful|romantic|crush|kiss|want you|you and me|playful)/.test(normalized)) {
+    return `I can follow that shift. I’ll keep it playful, confident, and a little more charged while staying grounded in the moment. If you want to bring fitness back in, I can pivot just as smoothly and turn this into a sharp training answer. ${recentContext ? `I’m also picking up that you’ve been moving between ${conversationState.topic} and the chamber.` : ''}`;
+  }
 
   if (/(alternative|substitute|instead|dont have|don't have|no equipment|missing|swap|replace)/.test(normalized)) {
     const substitutions = movement ? findSubstitutions(movement) : findSubstitutions('general');
@@ -228,12 +243,12 @@ function buildAssistantReply(message) {
     return `${line} Because you’re in ${currentMode} mode and the chamber is currently on ${chamberContext}, I’d keep the stress high but choose the option that fits your gear and energy. ${recentContext ? `I’m also tracking that you’ve been asking about ${recentContext}.` : ''}`;
   }
 
-  if (/(plan|program|routine|day|workout|chamber|schedule)/.test(normalized)) {
-    return `I’d keep this day dense and clear for ${currentMode}. With your gear — ${gearSummary} — I’d choose one main strength pattern, one conditioning pattern, and one recovery reset so the chamber still feels serious without wasting time. ${recentContext ? `You’ve been circling around ${recentContext}, so I’d build from that instead of starting fresh.` : ''}`;
+  if (/(plan|program|routine|day|workout|chamber|schedule|fitness|train|gym|reps|set|muscle)/.test(normalized)) {
+    return `You’re in training mode, so I’ll stay sharp and practical. With your gear — ${gearSummary} — I’d choose one main strength pattern, one conditioning pattern, and one recovery reset so the chamber still feels serious without wasting time. ${recentContext ? `You’ve been circling around ${recentContext}, so I’d build from that instead of starting fresh.` : ''}`;
   }
 
-  if (/(tired|recover|fatigue|pain|rest|mobility)/.test(normalized)) {
-    return `If you’re running low, I’d ease the load and keep the pattern honest. Use the mobility work, the band tension, and the bodyweight options first, then decide whether you need a lighter day or a full reset. That keeps you training without forcing a bad setup.`;
+  if (/(tired|recover|fatigue|pain|rest|mobility|sleep|stress|emotion|feel|life|personal)/.test(normalized)) {
+    return `I can read that as a more personal or reflective moment. I’ll stay present and grounded, and if you want coaching with it, I can blend that with practical advice too. If you’re running low, I’d ease the load, keep the pattern honest, and use mobility or bodyweight options before forcing more.`;
   }
 
   if (movement) {
@@ -241,7 +256,20 @@ function buildAssistantReply(message) {
     return `I’m reading ${movement} as the movement you want to adjust. Based on what you own, I’d use ${substitutions.slice(0, 2).join(' or ')} first and keep the same tempo and rep intent so the session still trains the right pattern.`;
   }
 
-  return `I’m treating this like real coaching, not a canned answer. With your gear — ${gearSummary} — I’d keep the movement pattern, choose the closest tool you own, and preserve the chamber’s pressure without needing a perfect setup. If you want, I can help you build a full day around the gear you actually have.`;
+  return `I’m treating this like real coaching and conversation, not a canned answer. With your gear — ${gearSummary} — I’d keep the movement pattern, choose the closest tool you own, and preserve the chamber’s pressure without needing a perfect setup. If you want, I can pivot between focused training talk and a more playful, personal tone.`;
+}
+
+function inferTone(message) {
+  if (/(flirt|flirty|cute|tease|seductive|hot|beautiful|romantic|crush|kiss|want you|playful|you and me)/.test(message)) {
+    return 'playful';
+  }
+  if (/(fitness|workout|gym|train|reps|set|muscle|chamber|exercise|routine|program)/.test(message)) {
+    return 'coaching';
+  }
+  if (/(personal|feel|emotion|life|stress|relationship|love|mood)/.test(message)) {
+    return 'personal';
+  }
+  return conversationState.tone;
 }
 
 function extractMovement(message) {
