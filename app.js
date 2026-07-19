@@ -107,8 +107,10 @@ function getAnissaReply(message) {
 function applyProgression() {
   const sets = 2;
   const reps = Math.min(12 + daysCompleted * 2, 24);
-  const sharedMovementPattern = getSharedMovementPattern(daysCompleted);
-  const sharedUpperPattern = getSharedUpperPattern(daysCompleted);
+  const sharedWarmup = getSharedWarmup(daysCompleted);
+  const sharedMain = getSharedMain(daysCompleted);
+  const sharedFinisher = getSharedFinisher(daysCompleted);
+  const sharedCooldown = getSharedCooldown(daysCompleted);
 
   characters.forEach((character) => {
     const xpGain = character.age <= 8 ? 10 : character.age <= 11 ? 15 : 20;
@@ -127,9 +129,11 @@ function applyProgression() {
     character.currentExercise = {
       sets,
       reps: reps + Math.max(0, character.age - 8),
-      movement: sharedMovementPattern,
-      upper: sharedUpperPattern,
-      note: 'Low sets, high reps. Everyone stays on the same flow so the pack trains together without delays.',
+      warmup: sharedWarmup,
+      main: sharedMain,
+      finisher: sharedFinisher,
+      cooldown: sharedCooldown,
+      note: 'Low sets, high reps. The pack moves in one rhythm with no wasted setup time.',
     };
 
     const nextStep = character.ladder.find((step) => step.xp >= character.xp) || character.ladder[character.ladder.length - 1];
@@ -139,26 +143,48 @@ function applyProgression() {
   renderProgression();
 }
 
-function getSharedMovementPattern(day) {
-  const patterns = [
-    'Bodyweight squats',
-    'Step-ups',
-    'Reverse lunges',
-    'Jump squats',
-    'Bear crawls',
+function getSharedWarmup(day) {
+  const warmups = [
+    'Marching in place + arm circles',
+    'Light bodyweight squats + hip openers',
+    'Step-taps + shoulder rolls',
+    'Dynamic lunges + reach overhead',
+    'Jump rope or fast feet + mobility',
   ];
-  return patterns[day % patterns.length];
+  return warmups[day % warmups.length];
 }
 
-function getSharedUpperPattern(day) {
-  const patterns = [
-    'Band rows',
-    'Push-up holds',
-    'Incline push-ups',
-    'Scapular pull-ups',
-    'Straight-arm band presses',
+function getSharedMain(day) {
+  const mains = [
+    'Bodyweight squats + band rows',
+    'Step-ups + incline push-ups',
+    'Reverse lunges + push-up holds',
+    'Jump squats + scapular pull-ups',
+    'Bear crawls + straight-arm band presses',
   ];
-  return patterns[day % patterns.length];
+  return mains[day % mains.length];
+}
+
+function getSharedFinisher(day) {
+  const finishers = [
+    '20-second pace intervals',
+    'High-rep mountain climbers',
+    'Fast feet + plank hold',
+    'Shadow boxing + footwork',
+    'Sprint steps + breath control',
+  ];
+  return finishers[day % finishers.length];
+}
+
+function getSharedCooldown(day) {
+  const cooldowns = [
+    'Slow breathing + hamstring stretch',
+    'Chest opener + hip stretch',
+    'Standing quad stretch + shoulder reset',
+    'Deep breathing + calf stretch',
+    'Gentle walk + full-body reset',
+  ];
+  return cooldowns[day % cooldowns.length];
 }
 
 function renderProgression() {
@@ -194,8 +220,10 @@ function renderProgression() {
         <div class="metric-label"><span>Exercise Evolution</span></div>
         <div class="meta-row">Sets: ${character.currentExercise?.sets || 2}</div>
         <div class="meta-row">Reps: ${character.currentExercise?.reps || 12}</div>
-        <div class="meta-row">Movement: ${character.currentExercise?.movement || 'Bodyweight squats'}</div>
-        <div class="meta-row">Upper: ${character.currentExercise?.upper || 'Band rows'}</div>
+        <div class="meta-row">Warm-up: ${character.currentExercise?.warmup || 'Marching in place'}</div>
+        <div class="meta-row">Main: ${character.currentExercise?.main || 'Bodyweight squats + band rows'}</div>
+        <div class="meta-row">Finisher: ${character.currentExercise?.finisher || 'Pace intervals'}</div>
+        <div class="meta-row">Cooldown: ${character.currentExercise?.cooldown || 'Breathing + stretch'}</div>
         <div class="meta-row">${character.currentExercise?.note || 'Low sets, high reps.'}</div>
       </div>
       <div class="metric-list">
