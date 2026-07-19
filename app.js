@@ -105,12 +105,15 @@ function getAnissaReply(message) {
 }
 
 function applyProgression() {
+  const sets = 2;
+  const reps = Math.min(12 + daysCompleted * 2, 24);
+  const sharedMovementPattern = getSharedMovementPattern(daysCompleted);
+  const sharedUpperPattern = getSharedUpperPattern(daysCompleted);
+
   characters.forEach((character) => {
     const xpGain = character.age <= 8 ? 10 : character.age <= 11 ? 15 : 20;
     character.xp = Math.min(character.xp + xpGain, character.xpCap);
 
-    const sets = 2;
-    const reps = Math.min(12 + daysCompleted * 2, 24);
     const movementProgress = Math.min(character.movement + (daysCompleted > 0 ? 1 : 0), 10);
     const strengthProgress = Math.min(character.strength + (daysCompleted > 0 ? 1 : 0), 10);
     const disciplineProgress = Math.min(character.discipline + (daysCompleted > 0 ? 1 : 0), 10);
@@ -121,8 +124,13 @@ function applyProgression() {
     character.discipline = disciplineProgress;
 
     character.exercisePhase = Math.min(character.exercisePhase + 1, 4);
-    const exerciseProfile = getExerciseProfile(character, sets, reps);
-    character.currentExercise = exerciseProfile;
+    character.currentExercise = {
+      sets,
+      reps: reps + Math.max(0, character.age - 8),
+      movement: sharedMovementPattern,
+      upper: sharedUpperPattern,
+      note: 'Low sets, high reps. Everyone stays on the same flow so the pack trains together without delays.',
+    };
 
     const nextStep = character.ladder.find((step) => step.xp >= character.xp) || character.ladder[character.ladder.length - 1];
     character.rank = nextStep.rank;
@@ -131,34 +139,26 @@ function applyProgression() {
   renderProgression();
 }
 
-function getExerciseProfile(character, sets, reps) {
-  const movementPatterns = [
+function getSharedMovementPattern(day) {
+  const patterns = [
     'Bodyweight squats',
     'Step-ups',
     'Reverse lunges',
     'Jump squats',
     'Bear crawls',
   ];
-  const upperBodyPatterns = [
+  return patterns[day % patterns.length];
+}
+
+function getSharedUpperPattern(day) {
+  const patterns = [
     'Band rows',
     'Push-up holds',
     'Incline push-ups',
     'Scapular pull-ups',
     'Straight-arm band presses',
   ];
-
-  const phase = character.exercisePhase;
-  const movement = movementPatterns[phase % movementPatterns.length];
-  const upper = upperBodyPatterns[phase % upperBodyPatterns.length];
-  const repTarget = reps + character.age;
-
-  return {
-    sets,
-    reps: repTarget,
-    movement,
-    upper,
-    note: `Low sets, high reps. Keep the load steady and focus on control.`,
-  };
+  return patterns[day % patterns.length];
 }
 
 function renderProgression() {
