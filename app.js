@@ -17,6 +17,7 @@ const characters = [
     pullUps: 0,
     strength: 2,
     discipline: 3,
+    exercisePhase: 0,
     ladder: [
       { rank: 'Novice Scout', xp: 0, movement: 2, strength: 2, discipline: 3 },
       { rank: 'Rising Scout', xp: 40, movement: 3, strength: 3, discipline: 4 },
@@ -34,6 +35,7 @@ const characters = [
     pullUps: 0,
     strength: 1,
     discipline: 2,
+    exercisePhase: 0,
     ladder: [
       { rank: 'Junior Initiate', xp: 0, movement: 1, strength: 1, discipline: 2 },
       { rank: 'Young Builder', xp: 25, movement: 2, strength: 2, discipline: 3 },
@@ -51,6 +53,7 @@ const characters = [
     pullUps: 0,
     strength: 3,
     discipline: 4,
+    exercisePhase: 0,
     ladder: [
       { rank: 'Apprentice Guardian', xp: 0, movement: 3, strength: 3, discipline: 4 },
       { rank: 'Rising Defender', xp: 60, movement: 4, strength: 4, discipline: 5 },
@@ -105,16 +108,57 @@ function applyProgression() {
   characters.forEach((character) => {
     const xpGain = character.age <= 8 ? 10 : character.age <= 11 ? 15 : 20;
     character.xp = Math.min(character.xp + xpGain, character.xpCap);
+
+    const sets = 2;
+    const reps = Math.min(12 + daysCompleted * 2, 24);
+    const movementProgress = Math.min(character.movement + (daysCompleted > 0 ? 1 : 0), 10);
+    const strengthProgress = Math.min(character.strength + (daysCompleted > 0 ? 1 : 0), 10);
+    const disciplineProgress = Math.min(character.discipline + (daysCompleted > 0 ? 1 : 0), 10);
+
     character.pullUps = Math.min(character.pullUps + (daysCompleted > 0 ? 1 : 0), 10);
-    character.movement = Math.min(character.movement + (daysCompleted > 0 ? 1 : 0), 10);
-    character.strength = Math.min(character.strength + (daysCompleted > 0 ? 1 : 0), 10);
-    character.discipline = Math.min(character.discipline + (daysCompleted > 0 ? 1 : 0), 10);
+    character.movement = movementProgress;
+    character.strength = strengthProgress;
+    character.discipline = disciplineProgress;
+
+    character.exercisePhase = Math.min(character.exercisePhase + 1, 4);
+    const exerciseProfile = getExerciseProfile(character, sets, reps);
+    character.currentExercise = exerciseProfile;
 
     const nextStep = character.ladder.find((step) => step.xp >= character.xp) || character.ladder[character.ladder.length - 1];
     character.rank = nextStep.rank;
   });
 
   renderProgression();
+}
+
+function getExerciseProfile(character, sets, reps) {
+  const movementPatterns = [
+    'Bodyweight squats',
+    'Step-ups',
+    'Reverse lunges',
+    'Jump squats',
+    'Bear crawls',
+  ];
+  const upperBodyPatterns = [
+    'Band rows',
+    'Push-up holds',
+    'Incline push-ups',
+    'Scapular pull-ups',
+    'Straight-arm band presses',
+  ];
+
+  const phase = character.exercisePhase;
+  const movement = movementPatterns[phase % movementPatterns.length];
+  const upper = upperBodyPatterns[phase % upperBodyPatterns.length];
+  const repTarget = reps + character.age;
+
+  return {
+    sets,
+    reps: repTarget,
+    movement,
+    upper,
+    note: `Low sets, high reps. Keep the load steady and focus on control.`,
+  };
 }
 
 function renderProgression() {
@@ -145,6 +189,14 @@ function renderProgression() {
           <div class="metric-label"><span>Discipline</span><span>${character.discipline}/10</span></div>
           <div class="bar-track"><div class="bar-fill" style="width: ${character.discipline * 10}%"></div></div>
         </div>
+      </div>
+      <div class="metric-list">
+        <div class="metric-label"><span>Exercise Evolution</span></div>
+        <div class="meta-row">Sets: ${character.currentExercise?.sets || 2}</div>
+        <div class="meta-row">Reps: ${character.currentExercise?.reps || 12}</div>
+        <div class="meta-row">Movement: ${character.currentExercise?.movement || 'Bodyweight squats'}</div>
+        <div class="meta-row">Upper: ${character.currentExercise?.upper || 'Band rows'}</div>
+        <div class="meta-row">${character.currentExercise?.note || 'Low sets, high reps.'}</div>
       </div>
       <div class="metric-list">
         <div class="metric-label"><span>Rank Ladder</span></div>
