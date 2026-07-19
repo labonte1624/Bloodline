@@ -4,6 +4,9 @@ const statusText = document.getElementById('statusText');
 const progressionGrid = document.getElementById('progressionGrid');
 const daySummary = document.getElementById('daySummary');
 const chamberStats = document.getElementById('chamberStats');
+const chatForm = document.getElementById('chatForm');
+const chatInput = document.getElementById('chatInput');
+const chatWindow = document.getElementById('chatWindow');
 
 const characters = [
   {
@@ -70,6 +73,22 @@ const characters = [
 
 let dayCompleted = false;
 let daysCompleted = 0;
+const equipmentList = [
+  'grip circle',
+  'resistance bands',
+  'dumbbells',
+  'barbell',
+  'adjustable dumbbell',
+  'pull up bar',
+  'yoga mat',
+  'jump rope',
+  'plate carrier',
+  'medicine ball',
+  'kettlebell',
+  'sandbag',
+  'agility ladder',
+];
+const conversationMemory = [];
 
 const hallBlueprints = [
   {
@@ -163,6 +182,155 @@ completeButton.addEventListener('click', () => {
   renderProgression();
   updateHeroState();
 });
+
+chatForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const message = chatInput.value.trim();
+  if (!message) return;
+
+  appendChatMessage('user', message);
+  chatInput.value = '';
+  appendChatMessage('assistant', 'Anissa is studying your request and the chamber context...');
+
+  window.setTimeout(() => {
+    const reply = buildAssistantReply(message);
+    const lastMessage = chatWindow.lastElementChild;
+    if (lastMessage) {
+      lastMessage.remove();
+    }
+    appendChatMessage('assistant', reply);
+  }, 550);
+});
+
+function appendChatMessage(role, text) {
+  const bubble = document.createElement('div');
+  bubble.className = `chat-message ${role}`;
+  bubble.textContent = text;
+  chatWindow.appendChild(bubble);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+function buildAssistantReply(message) {
+  const normalized = message.toLowerCase();
+  const currentMode = daysCompleted % 2 === 0 ? 'pressure' : 'control';
+  const gearSummary = equipmentList.join(', ');
+  const movement = extractMovement(normalized);
+  const chamberContext = characters[0]?.currentExercise?.title || 'the current chamber day';
+
+  conversationMemory.push(normalized);
+
+  if (/(alternative|substitute|instead|dont have|don't have|no equipment|missing|swap|replace)/.test(normalized)) {
+    const substitutions = movement ? findSubstitutions(movement) : findSubstitutions('general');
+    const line = substitutions.length
+      ? `I’m comparing ${movement || 'that movement'} against your equipment list. The cleanest substitutions are ${substitutions.join(' and ')}.`
+      : 'I’m adapting the pattern to keep the intent intact while using the gear you actually own.';
+    return `${line} Since the chamber is running in ${currentMode} mode and your current day is ${chamberContext}, I’d keep the same demand profile, but swap the tool rather than the purpose.`;
+  }
+
+  if (/(plan|program|routine|day|workout|chamber|schedule)/.test(normalized)) {
+    return `I’d keep the session dense and simple for ${currentMode}. With your gear — ${gearSummary} — I’d prioritize one main strength pattern, one conditioning pattern, and one recovery reset so the day still feels like a real chamber session.`;
+  }
+
+  if (/(tired|recover|fatigue|pain|rest|mobility)/.test(normalized)) {
+    return `If recovery is the issue, I’d reduce the load, keep the tempo honest, and lean on mobility work, band tension, and bodyweight control before pushing harder. Your equipment still gives you enough to train without forcing a bad setup.`;
+  }
+
+  if (movement) {
+    const substitutions = findSubstitutions(movement);
+    return `I’m reading ${movement} as the movement you want to adjust. Based on your gear, I’d use ${substitutions.slice(0, 2).join(' or ')} first, then keep the same rep target and tempo so the session still trains the intended pattern.`;
+  }
+
+  return `I’m treating this as coaching rather than a scripted answer. With your gear — ${gearSummary} — I’d stay practical: keep the movement pattern intact, choose the closest available tool, and preserve the chamber’s pressure without needing the ideal setup.`;
+}
+
+function extractMovement(message) {
+  const movementMap = [
+    'goblet squat',
+    'romanian deadlift',
+    'deadlift',
+    'pull-up',
+    'pull up',
+    'jump rope',
+    'kettlebell swing',
+    'burpee',
+    'thruster',
+    'farmer carry',
+    'agility ladder',
+    'good morning',
+    'band pull-apart',
+    'bear crawl',
+    'dead bug',
+    'plank',
+    'shadow boxing',
+    'band punches',
+    'squat',
+    'hinge',
+  ];
+
+  return movementMap.find((movement) => message.includes(movement)) || '';
+}
+
+function findSubstitutions(movement) {
+  const normalized = movement.toLowerCase();
+
+  if (normalized.includes('goblet squat') || normalized.includes('squat')) {
+    if (hasEquipment('adjustable dumbbell')) return ['an adjustable dumbbell goblet squat', 'a sandbag squat'];
+    if (hasEquipment('dumbbells')) return ['a dumbbell goblet squat', 'a banded squat'];
+    return ['a sandbag squat', 'a banded squat'];
+  }
+
+  if (normalized.includes('romanian deadlift') || normalized.includes('deadlift') || normalized.includes('hinge')) {
+    if (hasEquipment('dumbbells')) return ['a dumbbell Romanian deadlift', 'a barbell good morning'];
+    if (hasEquipment('barbell')) return ['a barbell Romanian deadlift', 'a sandbag hinge'];
+    return ['a banded good morning', 'a sandbag hinge'];
+  }
+
+  if (normalized.includes('pull-up') || normalized.includes('pull up')) {
+    if (hasEquipment('resistance bands')) return ['band-assisted pull-ups', 'scap pull-ups on the bar'];
+    if (hasEquipment('pull up bar')) return ['negative pull-ups', 'dead hangs with grip work'];
+    return ['scap pull-ups and grip holds', 'banded inverted rows'];
+  }
+
+  if (normalized.includes('jump rope')) {
+    if (hasEquipment('jump rope')) return ['jump rope intervals', 'shadow boxing rounds'];
+    return ['shadow boxing', 'high knees or fast feet on the mat'];
+  }
+
+  if (normalized.includes('kettlebell swing') || normalized.includes('swing')) {
+    if (hasEquipment('sandbag')) return ['a sandbag swing', 'a banded hip hinge'];
+    if (hasEquipment('kettlebell')) return ['a kettlebell swing', 'a dumbbell swing'];
+    return ['a banded hip hinge', 'a plate carrier squat thrust'];
+  }
+
+  if (normalized.includes('burpee') || normalized.includes('thruster')) {
+    if (hasEquipment('sandbag')) return ['a sandbag thruster', 'a squat thrust'];
+    return ['a bodyweight squat thrust', 'a plate carrier squat press'];
+  }
+
+  if (normalized.includes('farmer carry')) {
+    if (hasEquipment('dumbbells')) return ['a dumbbell farmer carry', 'a plate carrier carry'];
+    return ['a sandbag carry', 'a banded carry walk'];
+  }
+
+  if (normalized.includes('agility ladder')) {
+    return ['ladder footwork on the mat', 'speed skaters with a tempo focus'];
+  }
+
+  if (normalized.includes('good morning')) {
+    if (hasEquipment('barbell')) return ['a barbell good morning', 'a banded good morning'];
+    return ['a banded good morning', 'a sandbag hinge'];
+  }
+
+  if (normalized.includes('bear crawl') || normalized.includes('dead bug') || normalized.includes('plank')) {
+    return ['a slower tempo plank', 'dead bugs on the yoga mat'];
+  }
+
+  return ['a bodyweight version of the pattern', 'a band-based version of the movement'];
+}
+
+function hasEquipment(item) {
+  return equipmentList.some((entry) => entry.includes(item));
+}
 
 function updateHeroState() {
   const totalMovements = characters.reduce((sum, character) => sum + (character.currentExercise?.halls?.reduce((hallSum, hall) => hallSum + hall.movements.length, 0) || 0), 0);
