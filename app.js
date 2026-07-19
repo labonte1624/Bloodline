@@ -70,48 +70,69 @@ let conversationState = {
   lastEmotion: 'focused',
 };
 
-const hallPrograms = [
+const hallBlueprints = [
   {
-    hall: 'Hall 1 - Foundation',
-    focus: 'Control and rhythm',
-    movements: ['Bodyweight squat', 'Incline push-up'],
-    equipment: ['Bench', 'Resistance bands'],
+    name: 'Hall I — Titans',
+    focus: 'Dominant Hall',
+    lanes: [
+      { label: 'Lane A', vest: true, movement: 'Goblet Squat', load: '21 lb DB', reps: '3×22' },
+      { label: 'Lane B', vest: true, movement: 'Farmer Carry', load: '2×21 lb DBs', reps: '4×60 sec' },
+      { label: 'Lane C', vest: false, movement: 'Romanian Deadlift', load: '42 lb Barbell', reps: '3×20' },
+    ],
   },
   {
-    hall: 'Hall 2 - Iron Frame',
-    focus: 'Bracing and pull strength',
-    movements: ['Glute bridge', 'Band row'],
-    equipment: ['Resistance bands', 'Pull-up bar'],
+    name: 'Hall II — Warriors',
+    focus: 'Pressure and rhythm',
+    lanes: [
+      { label: 'Lane A', vest: false, movement: 'Shadow Boxing', load: 'Bodyweight', reps: '6×2 min' },
+      { label: 'Lane B', vest: false, movement: 'Band Punches', load: '35–85 lb Band', reps: '3×30/arm' },
+      { label: 'Lane C', vest: true, movement: 'Jump Rope', load: 'Bodyweight', reps: '4×90 sec' },
+    ],
   },
   {
-    hall: 'Hall 3 - Core Pressure',
-    focus: 'Stability under tension',
-    movements: ['Reverse lunge', 'Plank shoulder tap'],
-    equipment: ['Bench', 'Mat'],
+    name: 'Hall III — Tacticians',
+    focus: 'Agility and balance',
+    lanes: [
+      { label: 'Lane A', vest: false, movement: 'Agility Ladder', load: 'Bodyweight', reps: '8×40 sec' },
+      { label: 'Lane B', vest: false, movement: 'Single-Leg Balance', load: 'Bodyweight', reps: '3×60 sec/leg' },
+      { label: 'Lane C', vest: false, movement: 'Medicine Ball Rotation', load: '10 lb', reps: '3×20' },
+    ],
   },
   {
-    hall: 'Hall 4 - Pressure Ladder',
-    focus: 'Explosive control',
-    movements: ['Step-up', 'Diamond push-up'],
-    equipment: ['Bench', 'Pull-up bar'],
+    name: 'Hall IV — Monsters',
+    focus: 'Density and power',
+    lanes: [
+      { label: 'Lane A', vest: true, movement: 'Kettlebell Swings', load: '20 lb', reps: '3×35' },
+      { label: 'Lane B', vest: true, movement: 'Walking Lunges', load: 'Bodyweight', reps: '3×24/leg' },
+      { label: 'Lane C', vest: true, movement: 'Burpee or Sandbag Thruster', load: '12 Burpees or 18 Thrusters', reps: '3 rounds' },
+    ],
   },
   {
-    hall: 'Hall 5 - The Breaker',
-    focus: 'Power and density',
-    movements: ['Bulgarian split squat', 'Pull-up hold'],
-    equipment: ['Bench', 'Pull-up bar'],
+    name: 'Hall V — Athletes',
+    focus: 'Explosive conditioning',
+    lanes: [
+      { label: 'Lane A', vest: false, movement: 'Broad Jump', load: 'Bodyweight', reps: '5×4' },
+      { label: 'Lane B', vest: false, movement: 'Speed Skaters', load: 'Bodyweight', reps: '4×20/side' },
+      { label: 'Lane C', vest: false, movement: 'Battle Rope Slams', load: 'Light Rope', reps: '3×20' },
+    ],
   },
   {
-    hall: 'Hall 6 - The Vanguard',
-    focus: 'Upper-body strength',
-    movements: ['Dumbbell overhead press', 'Ranger row'],
-    equipment: ['Dumbbells', 'Bench'],
+    name: 'Hall VI — Architects',
+    focus: 'Structure and control',
+    lanes: [
+      { label: 'Lane A', vest: false, movement: 'Band Pull-Apart', load: 'Band', reps: '4×20' },
+      { label: 'Lane B', vest: false, movement: 'Good Morning', load: '42 lb Barbell', reps: '3×18' },
+      { label: 'Lane C', vest: false, movement: 'Plank Hold', load: 'Bodyweight', reps: '3×60 sec' },
+    ],
   },
   {
-    hall: 'Hall 7 - The Sentinel',
-    focus: 'Full-body endurance',
-    movements: ['Burpee', 'Weighted vest march'],
-    equipment: ['Weighted vest', 'Jump rope'],
+    name: 'Hall VII — Survivors',
+    focus: 'Endurance under pressure',
+    lanes: [
+      { label: 'Lane A', vest: true, movement: 'Weighted Vest March', load: 'Vest', reps: '4×8 min' },
+      { label: 'Lane B', vest: false, movement: 'Bear Crawl', load: 'Bodyweight', reps: '4×20 sec' },
+      { label: 'Lane C', vest: false, movement: 'Dead Bug', load: 'Bodyweight', reps: '3×20/side' },
+    ],
   },
 ];
 
@@ -247,34 +268,64 @@ function applyProgression() {
 }
 
 function getDailyProgram(day, character) {
-  const hall = hallPrograms[day % hallPrograms.length];
-  const lowRepMain = Math.max(4, 6 - Math.floor(character.age / 12));
-  const highVolumeSets = Math.min(7, 4 + Math.floor(day / 2));
+  const hallCount = day % 2 === 0 ? 3 : 4;
   const pushUpTaxSets = Math.min(8, 5 + Math.floor(day / 3));
   const pullUpSets = Math.min(6, 3 + Math.floor(day / 2));
+  const selectedHalls = [];
+
+  for (let index = 0; index < hallCount; index += 1) {
+    const template = hallBlueprints[(day + index) % hallBlueprints.length];
+    const scaledLanes = template.lanes.map((lane) => ({
+      ...lane,
+      load: scaleLoad(lane.load, character.age, character.strength),
+      reps: scaleReps(lane.reps, character.age, day),
+    }));
+
+    selectedHalls.push({
+      name: template.name,
+      focus: template.focus,
+      lanes: scaledLanes,
+    });
+  }
 
   return {
-    hall: hall.hall,
-    focus: hall.focus,
-    warmup: [
-      'Tempo march · 2 rounds',
-      'Scapular circles · 20 reps',
-      'Hip openers · 10 each side',
+    title: `Day ${day + 1} — ${day % 2 === 0 ? 'Relentless Pressure' : 'Controlled Pressure'}`,
+    chamberEntry: [
+      'Vest OFF · Jump rope · 4 min',
+      'Mobility · 2 rounds',
     ],
-    main: hall.movements.map((movement, index) => {
-      const reps = index === 0 ? lowRepMain : lowRepMain + 2;
-      return `${movement} · ${highVolumeSets} sets x ${reps} reps`;
-    }),
-    pushUpTax: `${pushUpTaxSets} sets x ${Math.min(20, 10 + character.strength)} reps`,
-    pullUpProgression: `${pullUpSets} sets x ${Math.max(2, Math.min(6, character.pullUps + 1))} reps + slow negatives`,
-    equipment: hall.equipment,
+    pullUpEvolution: [
+      `Dead Hang · ${Math.min(3, 2 + Math.floor(day / 3))}×${Math.max(20, 45 - character.age)} sec`,
+      `Scap Pulls · 3×${Math.max(6, 10 + Math.floor(character.strength / 2))}`,
+      `Band Assisted Pull-ups · ${pullUpSets}×${Math.max(2, Math.min(6, character.pullUps + 1))}`,
+    ],
+    halls: selectedHalls,
+    taxes: [`💰 ${Math.max(10, pushUpTaxSets * 5)} Push-ups after every working set`],
     cooldown: [
       'Deep breathing · 60 seconds',
       'Chest and hip stretch · 30 seconds each',
       'Full-body reset · 2 minutes',
     ],
-    note: 'Low reps, high volume, controlled tempo. This is recomposition: burn fat, build muscle, and force adaptation.',
+    note: '3–4 halls every day. Pressure, density, and discipline. This is recomposition in motion.',
   };
+}
+
+function scaleLoad(load, age, strength) {
+  if (load.includes('DB')) return load;
+  if (load.includes('Band')) return load;
+  if (load.includes('Barbell')) return load;
+  return load;
+}
+
+function scaleReps(reps, age, day) {
+  if (!reps.includes('×') && !reps.includes('round')) return reps;
+  const [prefix, suffix] = reps.split('×');
+  if (prefix && suffix && !Number.isNaN(Number(prefix))) {
+    const base = Number(prefix);
+    const adjusted = Math.max(2, base + Math.floor(day / 2));
+    return `${adjusted}×${suffix}`;
+  }
+  return reps;
 }
 
 function renderProgression() {
@@ -311,18 +362,21 @@ function renderProgression() {
       </div>
       <div class="metric-list">
         <div class="metric-label"><span>Daily Program</span></div>
-        <div class="meta-row">Hall: ${character.currentExercise?.hall || 'Hall 1 - Foundation'}</div>
-        <div class="meta-row">Focus: ${character.currentExercise?.focus || 'Control and rhythm'}</div>
-        <div class="meta-row">Warm-up:</div>
-        ${(character.currentExercise?.warmup || []).map((item) => `<div class="meta-row">• ${item}</div>`).join('')}
-        <div class="meta-row">Main:</div>
-        ${(character.currentExercise?.main || ['Bodyweight squat · 4 sets x 6 reps']).map((item) => `<div class="meta-row">• ${item}</div>`).join('')}
-        <div class="meta-row">Push-up Tax: ${character.currentExercise?.pushUpTax || '5 sets x 10 reps'}</div>
-        <div class="meta-row">Pull-up Progression: ${character.currentExercise?.pullUpProgression || '3 sets x 3 reps + slow negatives'}</div>
-        <div class="meta-row">Equipment: ${character.currentExercise?.equipment?.join(', ') || 'Bench, bands'}</div>
+        <div class="meta-row">${character.currentExercise?.title || 'Day 1 — Relentless Pressure'}</div>
+        <div class="meta-row">Chamber Entry:</div>
+        ${(character.currentExercise?.chamberEntry || []).map((item) => `<div class="meta-row">• ${item}</div>`).join('')}
+        <div class="meta-row">Pull-up Evolution:</div>
+        ${(character.currentExercise?.pullUpEvolution || []).map((item) => `<div class="meta-row">• ${item}</div>`).join('')}
+        <div class="meta-row">Taxes:</div>
+        ${(character.currentExercise?.taxes || []).map((item) => `<div class="meta-row">• ${item}</div>`).join('')}
+        ${(character.currentExercise?.halls || []).map((hall) => `
+          <div class="meta-row">${hall.name}</div>
+          <div class="meta-row">Focus: ${hall.focus}</div>
+          ${hall.lanes.map((lane) => `<div class="meta-row">• ${lane.label}: ${lane.movement} · ${lane.load} · ${lane.reps}</div>`).join('')}
+        `).join('')}
         <div class="meta-row">Cooldown:</div>
         ${(character.currentExercise?.cooldown || []).map((item) => `<div class="meta-row">• ${item}</div>`).join('')}
-        <div class="meta-row">${character.currentExercise?.note || 'Low reps, high volume, controlled tempo.'}</div>
+        <div class="meta-row">${character.currentExercise?.note || '3–4 halls every day. Pressure, density, and discipline.'}</div>
       </div>
       <div class="metric-list">
         <div class="metric-label"><span>Rank Ladder</span></div>
