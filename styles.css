@@ -6,6 +6,7 @@
   --muted: #aab0c1;
   --accent: #7dd3fc;
   --accent-2: #f59e0b;
+  --border: rgba(255, 255, 255, 0.08);
 }
 
 * {
@@ -15,19 +16,19 @@
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: linear-gradient(135deg, var(--bg), #111827);
+  background: radial-gradient(circle at top left, rgba(125, 211, 252, 0.12), transparent 28%), linear-gradient(135deg, var(--bg), #111827);
   color: var(--text);
 }
 
 .app-shell {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 32px 20px 60px;
 }
 
 .hero {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
+  grid-template-columns: 1.45fr 1fr;
   gap: 24px;
   margin-bottom: 24px;
 }
@@ -36,28 +37,48 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.3em;
   color: var(--accent);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   margin-bottom: 8px;
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 3.2rem;
   margin: 0 0 10px;
+  letter-spacing: -0.03em;
 }
 
 .hero-copy,
-.panel-copy {
+.panel-copy,
+.feature-card p,
+.meta-row,
+.program-block li {
   color: var(--muted);
   line-height: 1.6;
 }
 
 .hero-card,
-.panel {
+.panel,
+.progress-card,
+.feature-card {
   background: rgba(18, 20, 29, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
   padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+}
+
+.hero-card {
+  background: linear-gradient(145deg, rgba(18, 20, 29, 0.98), rgba(13, 18, 29, 0.96));
+}
+
+.hero-card-top {
+  margin-bottom: 12px;
+}
+
+.hero-card-copy {
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.6;
 }
 
 button,
@@ -83,7 +104,7 @@ button,
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  margin-top: 12px;
+  margin-top: 14px;
 }
 
 .secondary-button {
@@ -93,7 +114,7 @@ button,
 }
 
 .status {
-  margin-top: 10px;
+  margin-top: 12px;
   color: var(--accent);
 }
 
@@ -101,10 +122,12 @@ button,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-.pill {
+.pill,
+.program-badge,
+.stat-pill {
   border: 1px solid rgba(125, 211, 252, 0.3);
   border-radius: 999px;
   padding: 6px 10px;
@@ -112,10 +135,28 @@ button,
   font-size: 0.85rem;
 }
 
+.hero-highlights {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.feature-card h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
 .chat-box {
   margin: 16px 0;
   background: #0c1018;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 14px;
   min-height: 140px;
   display: flex;
@@ -162,27 +203,38 @@ button,
 }
 
 .progress-card {
-  background: #0d121d;
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 14px;
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.progress-card h4 {
-  margin-top: 0;
-  margin-bottom: 6px;
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
 }
 
-.meta-row {
-  color: var(--muted);
-  font-size: 0.95rem;
-  margin-bottom: 10px;
+.card-top h4 {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+}
+
+.program-badge {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.stat-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .metric-list {
   display: grid;
   gap: 8px;
-  margin-top: 12px;
+  margin-top: 4px;
 }
 
 .metric-row {
@@ -211,11 +263,42 @@ button,
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
 }
 
-@media (max-width: 800px) {
+.program-block {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.program-block h5 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.program-block ul {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.program-block li {
+  margin-bottom: 6px;
+}
+
+.hall-entry {
+  margin-top: 8px;
+}
+
+.hall-entry strong {
+  color: var(--text);
+}
+
+@media (max-width: 900px) {
   .hero {
     grid-template-columns: 1fr;
   }
 
+  .feature-grid,
   .progression-grid {
     grid-template-columns: 1fr;
   }

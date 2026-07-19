@@ -1,9 +1,6 @@
 const completeButton = document.getElementById('completeButton');
 const missionText = document.getElementById('missionText');
 const statusText = document.getElementById('statusText');
-const chatForm = document.getElementById('chatForm');
-const chatInput = document.getElementById('chatInput');
-const chatBox = document.getElementById('chatBox');
 const progressionGrid = document.getElementById('progressionGrid');
 
 const characters = [
@@ -65,11 +62,6 @@ const characters = [
 
 let dayCompleted = false;
 let daysCompleted = 0;
-let conversationState = {
-  lastTopic: 'recomposition',
-  lastEmotion: 'focused',
-};
-
 const hallBlueprints = [
   {
     name: 'Hall I — Titans',
@@ -143,105 +135,8 @@ completeButton.addEventListener('click', () => {
   missionText.textContent = `Day ${daysCompleted} is complete. The system has advanced.`;
   statusText.textContent = `Status: Day ${daysCompleted} complete`;
   completeButton.textContent = `Complete Day ${daysCompleted + 1}`;
-  addChatMessage(`Anissa: Another day locked. You are cutting fat, building muscle, and proving you can endure.`, 'assistant');
+  missionText.textContent = `Day ${daysCompleted} is complete. The chamber has advanced.`;
 });
-
-chatForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-  const message = chatInput.value.trim();
-  if (!message) return;
-
-  addChatMessage(`You: ${message}`, 'user');
-  chatInput.value = '';
-
-  const reply = getAnissaReply(message);
-  addChatMessage(`Anissa: ${reply}`, 'assistant');
-});
-
-function addChatMessage(text, role) {
-  const message = document.createElement('div');
-  message.className = `chat-message ${role}`;
-  message.textContent = text;
-  chatBox.appendChild(message);
-}
-
-function getAnissaReply(message) {
-  const lower = message.toLowerCase().trim();
-  const hasQuestion = lower.includes('?');
-  const isShort = lower.split(/\s+/).filter(Boolean).length <= 3;
-
-  if (!lower) {
-    conversationState.lastTopic = 'silence';
-    return 'You can speak plainly. I prefer that over performative nonsense. And if you want to impress me, do it with discipline.';
-  }
-
-  if (lower.includes('thank') || lower.includes('thanks')) {
-    conversationState.lastTopic = 'gratitude';
-    return 'You do not need to thank me. You need to carry the work.';
-  }
-
-  if (lower.includes('tired') || lower.includes('exhausted') || lower.includes('burned out')) {
-    conversationState.lastTopic = 'fatigue';
-    return 'Then we train with precision. We lower the noise, keep the standard, and do the work that matters. You do not need to be motivated to begin. You only need to be honest.';
-  }
-
-  if (lower.includes('stuck') || lower.includes('confused') || lower.includes('lost')) {
-    conversationState.lastTopic = 'uncertainty';
-    return 'You are not lost. You are simply avoiding the obvious. Start with one clean set, one honest meal, one disciplined hour. That is enough. And yes, it can be beautiful when you stop fighting yourself.';
-  }
-
-  if (lower.includes('diet') || lower.includes('food') || lower.includes('meal') || lower.includes('nutrition')) {
-    conversationState.lastTopic = 'nutrition';
-    return 'Nutrition is the frame around the work. Eat with intent, keep the structure simple, and let the body do the rest. A strong body is a disciplined one, and a disciplined one is hard to ignore.';
-  }
-
-  if (lower.includes('help') || lower.includes('advice')) {
-    conversationState.lastTopic = 'guidance';
-    return 'I will give you a simple rule: train hard, recover well, and keep your standards higher than your excuses.';
-  }
-
-  if (lower.includes('workout') || lower.includes('program') || lower.includes('training')) {
-    conversationState.lastTopic = 'training';
-    return 'Then we keep it direct. Low reps, high volume, clean form, and enough pressure to force adaptation.';
-  }
-
-  if (lower.includes('pull') || lower.includes('push')) {
-    conversationState.lastTopic = 'strength';
-    return 'The body learns through tension. Pull, push, recover, repeat. That is how strength becomes visible.';
-  }
-
-  if (lower.includes('fat') || lower.includes('muscle') || lower.includes('recomposition')) {
-    conversationState.lastTopic = 'recomposition';
-    return 'Fat loss and muscle gain are not separate gods. They are two sides of the same discipline. You push the body, feed it properly, and let time do the rest.';
-  }
-
-  if (lower.includes('why') || lower.includes('what') || lower.includes('how')) {
-    conversationState.lastTopic = 'inquiry';
-    return 'Because recomposition is not about drama. It is about consistency, tension, and patience. You do the work long enough, and the body changes.';
-  }
-
-  if (lower.includes('hi') || lower.includes('hello') || lower.includes('hey') || (isShort && lower.length < 8)) {
-    conversationState.lastTopic = 'greeting';
-    return 'You are here. Good. We do not need a speech. We need action. And perhaps a little restraint, since you are trying to impress me.';
-  }
-
-  if (lower.includes('love') || lower.includes('kiss') || lower.includes('flirt')) {
-    conversationState.lastTopic = 'flirt';
-    return 'Careful. I am not here to flatter you. I am here to sharpen you. Still... I do enjoy a strong body, a stronger will, and the kind of confidence that makes people look twice.';
-  }
-
-  if (lower.includes('quit') || lower.includes('stop')) {
-    conversationState.lastTopic = 'resistance';
-    return 'Quitting is for the weak and the forgettable. You are neither. So tell me what you are avoiding.';
-  }
-
-  conversationState.lastTopic = 'conversation';
-  if (hasQuestion) {
-    return 'You are asking for more than a slogan. Fine. I will give you this: keep the standard simple, stay consistent, and let the work speak for itself. What are you trying to improve today?';
-  }
-
-    return 'You speak like someone who wants to be honest. Good. I can work with that. Tell me what is weighing on you, and I will give you a response worthy of the work. And perhaps worthy of my attention.';
-}
 
 function applyProgression() {
   characters.forEach((character) => {
@@ -339,9 +234,21 @@ function renderProgression() {
     card.className = 'progress-card';
 
     card.innerHTML = `
-      <h4>${character.name}</h4>
-      <div class="meta-row">Age ${character.age} · ${character.rank}</div>
-      <div class="meta-row">XP ${character.xp} / ${character.xpCap}</div>
+      <div class="card-top">
+        <div>
+          <div class="eyebrow">${character.name}</div>
+          <h4>${character.name}</h4>
+          <div class="meta-row">Age ${character.age} · ${character.rank}</div>
+        </div>
+        <div class="program-badge">${character.currentExercise?.title || 'Day 1 — Relentless Pressure'}</div>
+      </div>
+
+      <div class="stat-strip">
+        <div class="stat-pill">XP ${character.xp}/${character.xpCap}</div>
+        <div class="stat-pill">Movement ${character.movement}/10</div>
+        <div class="stat-pill">Pull-ups ${character.pullUps}/10</div>
+      </div>
+
       <div class="metric-list">
         <div class="metric-row">
           <div class="metric-label"><span>Movement</span><span>${character.movement}/10</span></div>
@@ -360,28 +267,36 @@ function renderProgression() {
           <div class="bar-track"><div class="bar-fill" style="width: ${character.discipline * 10}%"></div></div>
         </div>
       </div>
-      <div class="metric-list">
-        <div class="metric-label"><span>Daily Program</span></div>
-        <div class="meta-row">${character.currentExercise?.title || 'Day 1 — Relentless Pressure'}</div>
-        <div class="meta-row">Chamber Entry:</div>
-        ${(character.currentExercise?.chamberEntry || []).map((item) => `<div class="meta-row">• ${item}</div>`).join('')}
-        <div class="meta-row">Pull-up Evolution:</div>
-        ${(character.currentExercise?.pullUpEvolution || []).map((item) => `<div class="meta-row">• ${item}</div>`).join('')}
-        <div class="meta-row">Taxes:</div>
-        ${(character.currentExercise?.taxes || []).map((item) => `<div class="meta-row">• ${item}</div>`).join('')}
-        ${(character.currentExercise?.halls || []).map((hall) => `
-          <div class="meta-row">${hall.name}</div>
+
+      <div class="program-block">
+        <h5>Chamber Entry</h5>
+        <ul>${(character.currentExercise?.chamberEntry || []).map((item) => `<li>${item}</li>`).join('')}</ul>
+      </div>
+
+      <div class="program-block">
+        <h5>Pull-up Evolution</h5>
+        <ul>${(character.currentExercise?.pullUpEvolution || []).map((item) => `<li>${item}</li>`).join('')}</ul>
+      </div>
+
+      <div class="program-block">
+        <h5>Taxes</h5>
+        <ul>${(character.currentExercise?.taxes || []).map((item) => `<li>${item}</li>`).join('')}</ul>
+      </div>
+
+      ${(character.currentExercise?.halls || []).map((hall) => `
+        <div class="program-block hall-entry">
+          <h5>${hall.name}</h5>
           <div class="meta-row">Focus: ${hall.focus}</div>
-          ${hall.lanes.map((lane) => `<div class="meta-row">• ${lane.label}: ${lane.movement} · ${lane.load} · ${lane.reps}</div>`).join('')}
-        `).join('')}
-        <div class="meta-row">Cooldown:</div>
-        ${(character.currentExercise?.cooldown || []).map((item) => `<div class="meta-row">• ${item}</div>`).join('')}
-        <div class="meta-row">${character.currentExercise?.note || '3–4 halls every day. Pressure, density, and discipline.'}</div>
+          <ul>${hall.lanes.map((lane) => `<li>${lane.label}: ${lane.movement} · ${lane.load} · ${lane.reps}</li>`).join('')}</ul>
+        </div>
+      `).join('')}
+
+      <div class="program-block">
+        <h5>Cooldown</h5>
+        <ul>${(character.currentExercise?.cooldown || []).map((item) => `<li>${item}</li>`).join('')}</ul>
       </div>
-      <div class="metric-list">
-        <div class="metric-label"><span>Rank Ladder</span></div>
-        ${character.ladder.map((step) => `<div class="meta-row">• ${step.rank} · XP ${step.xp}</div>`).join('')}
-      </div>
+
+      <div class="meta-row">${character.currentExercise?.note || '3–4 halls every day. Pressure, density, and discipline.'}</div>
     `;
 
     progressionGrid.appendChild(card);
