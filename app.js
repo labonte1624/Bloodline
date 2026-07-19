@@ -151,7 +151,7 @@ function getAnissaReply(message) {
 
   if (!lower) {
     conversationState.lastTopic = 'silence';
-    return 'You can speak plainly. I prefer that over performative nonsense.';
+    return 'You can speak plainly. I prefer that over performative nonsense. And if you want to impress me, do it with discipline.';
   }
 
   if (lower.includes('thank') || lower.includes('thanks')) {
@@ -161,17 +161,17 @@ function getAnissaReply(message) {
 
   if (lower.includes('tired') || lower.includes('exhausted') || lower.includes('burned out')) {
     conversationState.lastTopic = 'fatigue';
-    return 'Then we train with precision. We lower the noise, keep the standard, and do the work that matters. You do not need to be motivated to begin.';
+    return 'Then we train with precision. We lower the noise, keep the standard, and do the work that matters. You do not need to be motivated to begin. You only need to be honest.';
   }
 
   if (lower.includes('stuck') || lower.includes('confused') || lower.includes('lost')) {
     conversationState.lastTopic = 'uncertainty';
-    return 'You are not lost. You are simply avoiding the obvious. Start with one clean set, one honest meal, one disciplined hour. That is enough.';
+    return 'You are not lost. You are simply avoiding the obvious. Start with one clean set, one honest meal, one disciplined hour. That is enough. And yes, it can be beautiful when you stop fighting yourself.';
   }
 
   if (lower.includes('diet') || lower.includes('food') || lower.includes('meal') || lower.includes('nutrition')) {
     conversationState.lastTopic = 'nutrition';
-    return 'Nutrition is the frame around the work. Eat with intent, keep the structure simple, and let the body do the rest.';
+    return 'Nutrition is the frame around the work. Eat with intent, keep the structure simple, and let the body do the rest. A strong body is a disciplined one, and a disciplined one is hard to ignore.';
   }
 
   if (lower.includes('help') || lower.includes('advice')) {
@@ -201,12 +201,12 @@ function getAnissaReply(message) {
 
   if (lower.includes('hi') || lower.includes('hello') || lower.includes('hey') || (isShort && lower.length < 8)) {
     conversationState.lastTopic = 'greeting';
-    return 'You are here. Good. We do not need a speech. We need action.';
+    return 'You are here. Good. We do not need a speech. We need action. And perhaps a little restraint, since you are trying to impress me.';
   }
 
   if (lower.includes('love') || lower.includes('kiss') || lower.includes('flirt')) {
     conversationState.lastTopic = 'flirt';
-    return 'Careful. I am not here to flatter you. I am here to sharpen you. Still... I do enjoy a strong body and a stronger will.';
+    return 'Careful. I am not here to flatter you. I am here to sharpen you. Still... I do enjoy a strong body, a stronger will, and the kind of confidence that makes people look twice.';
   }
 
   if (lower.includes('quit') || lower.includes('stop')) {
@@ -219,7 +219,7 @@ function getAnissaReply(message) {
     return 'You are asking for more than a slogan. Fine. I will give you this: keep the standard simple, stay consistent, and let the work speak for itself. What are you trying to improve today?';
   }
 
-  return 'You speak like someone who wants to be honest. Good. I can work with that. Tell me what is weighing on you, and I will give you a response worthy of the work.';
+    return 'You speak like someone who wants to be honest. Good. I can work with that. Tell me what is weighing on you, and I will give you a response worthy of the work. And perhaps worthy of my attention.';
 }
 
 function applyProgression() {
