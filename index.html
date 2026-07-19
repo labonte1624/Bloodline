@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bloodline</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Daily Evolution System</p>
+          <h1>Bloodline</h1>
+          <p class="hero-copy">
+            A disciplined training companion built around progression, identity, and the voice of Anissa, the Viltrumite.
+          </p>
+        </div>
+        <div class="hero-card">
+          <h2>Today’s Mission</h2>
+          <p id="missionText">Complete Day 1 and begin the first step.</p>
+          <button id="completeButton">Mark Day 1 Complete</button>
+          <p id="statusText" class="status">Status: Not started</p>
+        </div>
+      </header>
+
+      <main>
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Anissa</h3>
+            <span class="pill">The Viltrumite</span>
+          </div>
+          <p class="panel-copy">
+            Anissa guides the system with discipline, resilience, and forward motion.
+          </p>
+          <div class="chat-box" id="chatBox">
+            <div class="chat-message assistant">Anissa: Begin with intent. The first step matters.</div>
+          </div>
+          <form id="chatForm" class="chat-form">
+            <input id="chatInput" type="text" placeholder="Send a message to Anissa" />
+            <button type="submit">Send</button>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Character Progression</h3>
+            <span class="pill">Day 1 Baseline</span>
+          </div>
+          <div class="character-grid">
+            <article class="character-card">
+              <h4>Hall 1</h4>
+              <p>Day 1 Complete: Yes</p>
+              <p>Stage: Initiate</p>
+              <p>Pull-Up Progression: 0</p>
+            </article>
+            <article class="character-card">
+              <h4>Hall 2</h4>
+              <p>Day 1 Complete: Yes</p>
+              <p>Stage: Initiate</p>
+              <p>Pull-Up Progression: 0</p>
+            </article>
+            <article class="character-card">
+              <h4>Hall 3</h4>
+              <p>Day 1 Complete: Yes</p>
+              <p>Stage: Initiate</p>
+              <p>Pull-Up Progression: 0</p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
