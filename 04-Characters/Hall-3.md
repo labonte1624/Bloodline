@@ -1,18 +1,22 @@
-# Hall 3
+# Rising Guardian
 
-This character is reset to the Day 1 baseline only.
+This character begins at the Day 1 baseline with age-appropriate scaling.
 
-## Day 1 Status
-- Day 1 completed: Yes
-- Current stage: Initiate
+## Profile
+- Age: 12
+- Rank: Apprentice Guardian
+- XP: 0 / 180
 - Pull-up progression: 0
+- Movement baseline: 3/10
+- Strength baseline: 3/10
+- Discipline baseline: 4/10
 
 ## Progression Chart
 
-| Metric | Day 1 State |
+| Area | Day 1 State |
 | --- | --- |
-| Training completion | Day 1 complete |
-| Strength baseline | Beginning level |
-| Pull-up progression | 0 |
-| Discipline marker | Fresh start |
-| Hall status | First step |
+| Movement | 3/10 |
+| Pull-ups | 0/10 |
+| Strength | 3/10 |
+| Discipline | 4/10 |
+| XP | 0 / 180 |

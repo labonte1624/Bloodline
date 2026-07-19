@@ -1,18 +1,22 @@
-# Hall 1
+# Invincible
 
-This character is reset to the Day 1 baseline only.
+This character begins at the Day 1 baseline with age-appropriate scaling.
 
-## Day 1 Status
-- Day 1 completed: Yes
-- Current stage: Initiate
+## Profile
+- Age: 10
+- Rank: Novice Scout
+- XP: 0 / 120
 - Pull-up progression: 0
+- Movement baseline: 2/10
+- Strength baseline: 2/10
+- Discipline baseline: 3/10
 
 ## Progression Chart
 
-| Metric | Day 1 State |
+| Area | Day 1 State |
 | --- | --- |
-| Training completion | Day 1 complete |
-| Strength baseline | Beginning level |
-| Pull-up progression | 0 |
-| Discipline marker | Fresh start |
-| Hall status | First step |
+| Movement | 2/10 |
+| Pull-ups | 0/10 |
+| Strength | 2/10 |
+| Discipline | 3/10 |
+| XP | 0 / 120 |

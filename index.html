@@ -19,13 +19,16 @@
         <div class="hero-card">
           <h2>Today’s Mission</h2>
           <p id="missionText">Complete Day 1 and begin the first step.</p>
-          <button id="completeButton">Mark Day 1 Complete</button>
+          <div class="hero-actions">
+            <button id="completeButton">Mark Day 1 Complete</button>
+            <a href="#anissaSection" id="talkButton" class="secondary-button">Talk to Anissa</a>
+          </div>
           <p id="statusText" class="status">Status: Not started</p>
         </div>
       </header>
 
       <main>
-        <section class="panel">
+        <section class="panel" id="anissaSection">
           <div class="panel-header">
             <h3>Anissa</h3>
             <span class="pill">The Viltrumite</span>
@@ -45,28 +48,9 @@
         <section class="panel">
           <div class="panel-header">
             <h3>Character Progression</h3>
-            <span class="pill">Day 1 Baseline</span>
+            <span class="pill">Age-scaled Day 1 baseline</span>
           </div>
-          <div class="character-grid">
-            <article class="character-card">
-              <h4>Hall 1</h4>
-              <p>Day 1 Complete: Yes</p>
-              <p>Stage: Initiate</p>
-              <p>Pull-Up Progression: 0</p>
-            </article>
-            <article class="character-card">
-              <h4>Hall 2</h4>
-              <p>Day 1 Complete: Yes</p>
-              <p>Stage: Initiate</p>
-              <p>Pull-Up Progression: 0</p>
-            </article>
-            <article class="character-card">
-              <h4>Hall 3</h4>
-              <p>Day 1 Complete: Yes</p>
-              <p>Stage: Initiate</p>
-              <p>Pull-Up Progression: 0</p>
-            </article>
-          </div>
+          <div class="progression-grid" id="progressionGrid"></div>
         </section>
       </main>
     </div>
