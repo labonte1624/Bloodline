@@ -184,6 +184,10 @@ function updateHeroState() {
       <span>Halls</span>
       <strong>7</strong>
     </div>
+    <div class="hero-stat-block">
+      <span>Mode</span>
+      <strong>${daysCompleted % 2 === 0 ? 'Pressure' : 'Control'}</strong>
+    </div>
   `;
 }
 
@@ -307,6 +311,11 @@ function renderProgression() {
       <div class="program-block">
         <h5>Chamber Entry</h5>
         <ul>${(character.currentExercise?.chamberEntry || []).map((item) => `<li>${item}</li>`).join('')}</ul>
+      </div>
+
+      <div class="program-block">
+        <h5>Mission Focus</h5>
+        <div class="meta-row">${character.currentExercise?.note || 'Every day includes two movement slots from all 7 halls.'}</div>
       </div>
 
       <div class="program-block">
