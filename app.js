@@ -66,6 +66,51 @@ const characters = [
 let dayCompleted = false;
 let daysCompleted = 0;
 
+const hallPrograms = [
+  {
+    hall: 'Hall 1 - Foundation',
+    focus: 'Control and rhythm',
+    movements: ['Bodyweight squat', 'Incline push-up'],
+    equipment: ['Bench', 'Resistance bands'],
+  },
+  {
+    hall: 'Hall 2 - Iron Frame',
+    focus: 'Bracing and pull strength',
+    movements: ['Glute bridge', 'Band row'],
+    equipment: ['Resistance bands', 'Pull-up bar'],
+  },
+  {
+    hall: 'Hall 3 - Core Pressure',
+    focus: 'Stability under tension',
+    movements: ['Reverse lunge', 'Plank shoulder tap'],
+    equipment: ['Bench', 'Mat'],
+  },
+  {
+    hall: 'Hall 4 - Pressure Ladder',
+    focus: 'Explosive control',
+    movements: ['Step-up', 'Diamond push-up'],
+    equipment: ['Bench', 'Pull-up bar'],
+  },
+  {
+    hall: 'Hall 5 - The Breaker',
+    focus: 'Power and density',
+    movements: ['Bulgarian split squat', 'Pull-up hold'],
+    equipment: ['Bench', 'Pull-up bar'],
+  },
+  {
+    hall: 'Hall 6 - The Vanguard',
+    focus: 'Upper-body strength',
+    movements: ['Dumbbell overhead press', 'Ranger row'],
+    equipment: ['Dumbbells', 'Bench'],
+  },
+  {
+    hall: 'Hall 7 - The Sentinel',
+    focus: 'Full-body endurance',
+    movements: ['Burpee', 'Weighted vest march'],
+    equipment: ['Weighted vest', 'Jump rope'],
+  },
+];
+
 completeButton.addEventListener('click', () => {
   dayCompleted = true;
   daysCompleted += 1;
@@ -73,7 +118,7 @@ completeButton.addEventListener('click', () => {
   missionText.textContent = `Day ${daysCompleted} is complete. The system has advanced.`;
   statusText.textContent = `Status: Day ${daysCompleted} complete`;
   completeButton.textContent = `Complete Day ${daysCompleted + 1}`;
-  addChatMessage(`Anissa: Another day locked. You're climbing toward something... *almost* impressive.`, 'assistant');
+  addChatMessage(`Anissa: Another day locked. You are cutting fat, building muscle, and proving you can endure.`, 'assistant');
 });
 
 chatForm.addEventListener('submit', (event) => {
@@ -97,25 +142,18 @@ function addChatMessage(text, role) {
 
 function getAnissaReply(message) {
   const lower = message.toLowerCase();
-  if (lower.includes('workout')) return 'Show up. Execute. Don\'t waste my time with excuses. Most would crumble at what comes next.';
-  if (lower.includes('today')) return 'Today separates the committed from the pathetic. Which are you?';
-  if (lower.includes('pull')) return 'Pull-ups are for those ready to lift themselves higher. Are you ready?';
-  if (lower.includes('movement')) return 'Movement is control. Control is power. Power is what matters.';
-  if (lower.includes('strength')) return 'Strength isn\'t given. It\'s taken. Day by day. Rep by rep. From yourself.';
-  if (lower.includes('hard')) return 'Hard is where most break. That\'s where I\'m interested in what you\'re made of.';
-  if (lower.includes('pain')) return 'Pain is just weakness leaving. Or it\'s you leaving. We\'ll see which.';
+  if (lower.includes('workout')) return 'Your body is not a museum piece. It is a machine built to burn fat, gain muscle, and adapt. So work.';
+  if (lower.includes('today')) return 'Today is recomposition. Fat loss, muscle gain, and discipline. No excuses.';
+  if (lower.includes('pull')) return 'Pull-up strength is part of the engine. It builds the upper body while you drive fat loss and muscle growth.';
+  if (lower.includes('movement')) return 'Movement is the bridge between fat loss and muscle gain. Control the motion, and the body will follow.';
+  if (lower.includes('strength')) return 'Strength is the frame. Muscle is the mass. Fat loss is the cut. Together, they make recomposition.';
+  if (lower.includes('hard')) return 'Hard is where fat loss gets real and muscle growth begins to show. That is where you belong.';
+  if (lower.includes('pain')) return 'Pain is the cost of adaptation. You endure it, recover, and come back leaner and stronger.';
   if (lower.includes('quit') || lower.includes('stop')) return 'Quitting is for the forgettable. Don\'t be forgettable.';
-  return 'Discipline separates those of consequence from those of dust. Choose which you\'ll be.';
+  return 'Recomposition is simple: burn fat, build muscle, and never drift. That is the standard.';
 }
 
 function applyProgression() {
-  const sets = 2;
-  const reps = Math.min(12 + daysCompleted * 2, 24);
-  const sharedWarmup = getSharedWarmup(daysCompleted);
-  const sharedMain = getSharedMain(daysCompleted);
-  const sharedFinisher = getSharedFinisher(daysCompleted);
-  const sharedCooldown = getSharedCooldown(daysCompleted);
-
   characters.forEach((character) => {
     const xpGain = character.age <= 8 ? 10 : character.age <= 11 ? 15 : 20;
     character.xp = Math.min(character.xp + xpGain, character.xpCap);
@@ -130,15 +168,7 @@ function applyProgression() {
     character.discipline = disciplineProgress;
 
     character.exercisePhase = Math.min(character.exercisePhase + 1, 4);
-    character.currentExercise = {
-      sets,
-      reps: reps + Math.max(0, character.age - 8),
-      warmup: sharedWarmup,
-      main: sharedMain,
-      finisher: sharedFinisher,
-      cooldown: sharedCooldown,
-      note: 'Low sets, high reps. The pack moves in one rhythm with no wasted setup time.',
-    };
+    character.currentExercise = getDailyProgram(daysCompleted, character);
 
     const nextStep = character.ladder.find((step) => step.xp >= character.xp) || character.ladder[character.ladder.length - 1];
     character.rank = nextStep.rank;
@@ -147,54 +177,44 @@ function applyProgression() {
   renderProgression();
 }
 
-function getSharedWarmup(day) {
-  const warmups = [
-    'Marching in place + arm circles',
-    'Light bodyweight squats + hip openers',
-    'Step-taps + shoulder rolls',
-    'Dynamic lunges + reach overhead',
-    'Jump rope or fast feet + mobility',
-  ];
-  return warmups[day % warmups.length];
-}
+function getDailyProgram(day, character) {
+  const hall = hallPrograms[day % hallPrograms.length];
+  const lowRepMain = Math.max(4, 6 - Math.floor(character.age / 12));
+  const highVolumeSets = Math.min(7, 4 + Math.floor(day / 2));
+  const pushUpTaxSets = Math.min(8, 5 + Math.floor(day / 3));
+  const pullUpSets = Math.min(6, 3 + Math.floor(day / 2));
 
-function getSharedMain(day) {
-  const mains = [
-    'Bodyweight squats + band rows',
-    'Step-ups + incline push-ups',
-    'Reverse lunges + push-up holds',
-    'Jump squats + scapular pull-ups',
-    'Bear crawls + straight-arm band presses',
-  ];
-  return mains[day % mains.length];
-}
-
-function getSharedFinisher(day) {
-  const finishers = [
-    '20-second pace intervals',
-    'High-rep mountain climbers',
-    'Fast feet + plank hold',
-    'Shadow boxing + footwork',
-    'Sprint steps + breath control',
-  ];
-  return finishers[day % finishers.length];
-}
-
-function getSharedCooldown(day) {
-  const cooldowns = [
-    'Slow breathing + hamstring stretch',
-    'Chest opener + hip stretch',
-    'Standing quad stretch + shoulder reset',
-    'Deep breathing + calf stretch',
-    'Gentle walk + full-body reset',
-  ];
-  return cooldowns[day % cooldowns.length];
+  return {
+    hall: hall.hall,
+    focus: hall.focus,
+    warmup: [
+      'Tempo march · 2 rounds',
+      'Scapular circles · 20 reps',
+      'Hip openers · 10 each side',
+    ],
+    main: hall.movements.map((movement, index) => {
+      const reps = index === 0 ? lowRepMain : lowRepMain + 2;
+      return `${movement} · ${highVolumeSets} sets x ${reps} reps`;
+    }),
+    pushUpTax: `${pushUpTaxSets} sets x ${Math.min(20, 10 + character.strength)} reps`,
+    pullUpProgression: `${pullUpSets} sets x ${Math.max(2, Math.min(6, character.pullUps + 1))} reps + slow negatives`,
+    equipment: hall.equipment,
+    cooldown: [
+      'Deep breathing · 60 seconds',
+      'Chest and hip stretch · 30 seconds each',
+      'Full-body reset · 2 minutes',
+    ],
+    note: 'Low reps, high volume, controlled tempo. This is recomposition: burn fat, build muscle, and force adaptation.',
+  };
 }
 
 function renderProgression() {
   progressionGrid.innerHTML = '';
 
   characters.forEach((character) => {
+    if (!character.currentExercise) {
+      character.currentExercise = getDailyProgram(daysCompleted, character);
+    }
     const card = document.createElement('article');
     card.className = 'progress-card';
 
@@ -221,14 +241,19 @@ function renderProgression() {
         </div>
       </div>
       <div class="metric-list">
-        <div class="metric-label"><span>Exercise Evolution</span></div>
-        <div class="meta-row">Sets: ${character.currentExercise?.sets || 2}</div>
-        <div class="meta-row">Reps: ${character.currentExercise?.reps || 12}</div>
-        <div class="meta-row">Warm-up: ${character.currentExercise?.warmup || 'Marching in place'}</div>
-        <div class="meta-row">Main: ${character.currentExercise?.main || 'Bodyweight squats + band rows'}</div>
-        <div class="meta-row">Finisher: ${character.currentExercise?.finisher || 'Pace intervals'}</div>
-        <div class="meta-row">Cooldown: ${character.currentExercise?.cooldown || 'Breathing + stretch'}</div>
-        <div class="meta-row">${character.currentExercise?.note || 'Low sets, high reps.'}</div>
+        <div class="metric-label"><span>Daily Program</span></div>
+        <div class="meta-row">Hall: ${character.currentExercise?.hall || 'Hall 1 - Foundation'}</div>
+        <div class="meta-row">Focus: ${character.currentExercise?.focus || 'Control and rhythm'}</div>
+        <div class="meta-row">Warm-up:</div>
+        ${(character.currentExercise?.warmup || []).map((item) => `<div class="meta-row">• ${item}</div>`).join('')}
+        <div class="meta-row">Main:</div>
+        ${(character.currentExercise?.main || ['Bodyweight squat · 4 sets x 6 reps']).map((item) => `<div class="meta-row">• ${item}</div>`).join('')}
+        <div class="meta-row">Push-up Tax: ${character.currentExercise?.pushUpTax || '5 sets x 10 reps'}</div>
+        <div class="meta-row">Pull-up Progression: ${character.currentExercise?.pullUpProgression || '3 sets x 3 reps + slow negatives'}</div>
+        <div class="meta-row">Equipment: ${character.currentExercise?.equipment?.join(', ') || 'Bench, bands'}</div>
+        <div class="meta-row">Cooldown:</div>
+        ${(character.currentExercise?.cooldown || []).map((item) => `<div class="meta-row">• ${item}</div>`).join('')}
+        <div class="meta-row">${character.currentExercise?.note || 'Low reps, high volume, controlled tempo.'}</div>
       </div>
       <div class="metric-list">
         <div class="metric-label"><span>Rank Ladder</span></div>
