@@ -44,8 +44,8 @@ const characters = [
     ],
   },
   {
-    name: 'Rising Guardian',
-    age: 12,
+    name: 'Omni-Man',
+    age: 34,
     rank: 'Apprentice Guardian',
     xp: 0,
     xpCap: 180,
@@ -73,7 +73,7 @@ completeButton.addEventListener('click', () => {
   missionText.textContent = `Day ${daysCompleted} is complete. The system has advanced.`;
   statusText.textContent = `Status: Day ${daysCompleted} complete`;
   completeButton.textContent = `Complete Day ${daysCompleted + 1}`;
-  addChatMessage(`Anissa: Discipline locked in. Day ${daysCompleted} is recorded.`, 'assistant');
+  addChatMessage(`Anissa: Another day locked. You're climbing toward something... *almost* impressive.`, 'assistant');
 });
 
 chatForm.addEventListener('submit', (event) => {
@@ -97,11 +97,15 @@ function addChatMessage(text, role) {
 
 function getAnissaReply(message) {
   const lower = message.toLowerCase();
-  if (lower.includes('workout')) return 'The mission is simple: show up, execute, and finish.';
-  if (lower.includes('today')) return 'Today is about commitment, not comfort.';
-  if (lower.includes('pull')) return 'Pull-up progression remains at zero until the foundation is solid.';
-  if (lower.includes('movement')) return 'Movement is the first bridge to endurance and control.';
-  return 'Stay disciplined. One day, one step, one purpose.';
+  if (lower.includes('workout')) return 'Show up. Execute. Don\'t waste my time with excuses. Most would crumble at what comes next.';
+  if (lower.includes('today')) return 'Today separates the committed from the pathetic. Which are you?';
+  if (lower.includes('pull')) return 'Pull-ups are for those ready to lift themselves higher. Are you ready?';
+  if (lower.includes('movement')) return 'Movement is control. Control is power. Power is what matters.';
+  if (lower.includes('strength')) return 'Strength isn\'t given. It\'s taken. Day by day. Rep by rep. From yourself.';
+  if (lower.includes('hard')) return 'Hard is where most break. That\'s where I\'m interested in what you\'re made of.';
+  if (lower.includes('pain')) return 'Pain is just weakness leaving. Or it\'s you leaving. We\'ll see which.';
+  if (lower.includes('quit') || lower.includes('stop')) return 'Quitting is for the forgettable. Don\'t be forgettable.';
+  return 'Discipline separates those of consequence from those of dust. Choose which you\'ll be.';
 }
 
 function applyProgression() {
